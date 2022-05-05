@@ -7,10 +7,10 @@ import 'package:flutters/flutters-game.dart';
 
 class Cloud extends GameObject {
   final Random rng = new Random();
-  final List<Sprite> cloudSprites = [
-    Sprite('cloud-1.png'),
-    Sprite('cloud-2.png'),
-    Sprite('cloud-3.png')
+  final List<Future<Sprite>> cloudSprites = [
+    Sprite.load('cloud-1.png'),
+    Sprite.load('cloud-2.png'),
+    Sprite.load('cloud-3.png')
   ];
 
   Rect rect;
@@ -42,7 +42,8 @@ class Cloud extends GameObject {
     height = game.tileSize / 5 * (185 / 100);
     rect = Rect.fromLTWH(x, y, width, height);
     c.drawRect(rect, paint);
-    cloudSprites[cloudType].renderRect(c, rect.inflate(0));
+    var sprite = cloudSprites[cloudType] as Sprite;
+    sprite.renderRect(c, rect.inflate(0));
   }
 
   @override

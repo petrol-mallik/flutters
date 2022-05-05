@@ -7,9 +7,9 @@ import 'package:flutters/components/core/gameobject.dart';
 import 'package:flutters/flutters-game.dart';
 
 class Bird extends GameObject {
-  final List<List<Sprite>> characterSprites = [
-    [Sprite('bird-0.png'), Sprite('bird-1.png')],
-    [Sprite('bird-0-left.png'), Sprite('bird-1-left.png')]
+  final List<List<Future<Sprite>>> characterSprites = [
+    [Sprite.load('bird-0.png'), Sprite.load('bird-1.png')],
+    [Sprite.load('bird-0-left.png'), Sprite.load('bird-1-left.png')]
   ];
 
   Rect rect;
@@ -49,8 +49,9 @@ class Bird extends GameObject {
     c.rotate(rotation);
     c.translate(-width / 2, -height / 2);
     c.drawRect(rect, paint);
-    characterSprites[characterSpritesIndex][flutterFrame]
-        .renderRect(c, rect.inflate(0));
+    var sprite =
+        characterSprites[characterSpritesIndex][flutterFrame] as Sprite;
+    sprite.renderRect(c, rect.inflate(0));
     c.restore();
   }
 

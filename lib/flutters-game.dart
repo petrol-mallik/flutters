@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutters/components/background.dart';
 import 'package:flutters/components/bird.dart';
@@ -16,7 +17,7 @@ enum GameState {
   gameOver,
 }
 
-class FluttersGame extends Game {
+class FluttersGame with Game, TapDetector {
   GameState currentGameState = GameState.playing;
   Size viewport;
   Background skyBackground;
@@ -36,8 +37,7 @@ class FluttersGame extends Game {
   double floorHeight = 250;
   // Game Score
   double currentHeight = 0;
-  FluttersGame(screenDimensions) {
-    resize(screenDimensions);
+  FluttersGame() {
     skyBackground = Background(this, 0, 0, viewport.width, viewport.height);
     groundFloor = Floor(this, 0, viewport.height - floorHeight, viewport.width,
         floorHeight, 0xff48BB78);
@@ -55,6 +55,7 @@ class FluttersGame extends Game {
     birdPosY = viewport.height - floorHeight - tileSize + (tileSize / 8);
   }
 
+  @override
   void render(Canvas c) {
     skyBackground.render(c);
     c.save();
@@ -77,6 +78,7 @@ class FluttersGame extends Game {
     }
   }
 
+  @override
   void update(double t) {
     if (currentGameState == GameState.playing) {
       currentLevel.levelObstacles.forEach((obstacle) {
@@ -151,7 +153,8 @@ class FluttersGame extends Game {
     }
   }
 
-  void onTapDown(TapDownDetails d) {
+  @override
+  void onTapDown(TapDownInfo d) {
     if (currentGameState != GameState.gameOver) {
       // Make the bird flutter
       birdPlayer.startFlutter();
@@ -159,15 +162,18 @@ class FluttersGame extends Game {
       flutterValue = flutterIntensity;
       return;
     }
-    if (gameOverDialog.playButton.contains(d.globalPosition)) {
+    if (gameOverDialog.playButton.contains(d.eventPosition.global as Offset)) {
       restartGame();
     }
-    if (gameOverDialog.creditsText.toRect().contains(d.globalPosition)) {
+    if (gameOverDialog.creditsText
+        .toRect()
+        .contains(d.eventPosition.global as Offset)) {
       _launchURL();
     }
   }
 
-  void onTapUp(TapUpDetails d) {
+  @override
+  void onTapUp(TapUpInfo d) {
     birdPlayer.endFlutter();
   }
 

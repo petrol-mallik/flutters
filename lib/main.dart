@@ -1,17 +1,16 @@
 import 'package:flame/flame.dart';
-import 'package:flame/util.dart';
+import 'package:flame/game.dart';
+import 'package:flame/input.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutters/flutters-game.dart';
 
 void main() async {
-  Util flameUtil = Util();
   WidgetsFlutterBinding.ensureInitialized();
   if (!kIsWeb) {
-    await Flame.util.setPortrait();
-    await Flame.util.fullScreen();
+    await Flame.device.setPortrait();
+    await Flame.device.fullScreen();
   }
 
   Flame.images.loadAll(<String>[
@@ -24,18 +23,14 @@ void main() async {
     'cloud-3.png',
   ]);
 
-  final screenDimensions = await Flame.util.initialDimensions();
-  FluttersGame game = FluttersGame(screenDimensions);
-  TapGestureRecognizer tapSink = TapGestureRecognizer();
-  tapSink.onTapDown = game.onTapDown;
-  tapSink.onTapUp = game.onTapUp;
+  FluttersGame game = FluttersGame();
+
   RawKeyboard.instance.addListener((RawKeyEvent rawKeyEvent) {
     final space = ' ';
     if (rawKeyEvent.character == space) {
-      game.onTapDown(TapDownDetails());
+      game.onTapDown(TapDownInfo.fromDetails(game, TapDownDetails()));
     }
   });
 
-  runApp(game.widget);
-  flameUtil.addGestureRecognizer(tapSink);
+  runApp(GameWidget(game: game));
 }
